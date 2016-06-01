@@ -88,14 +88,16 @@ end
 local function StoreBlueprint(group, bp)
     local id = bp.BlueprintId
     local t = original_blueprints[group]
-    if t[id] and bp.Merge then
+
+    if bp.Merge then
         local child = bp.Merge
+
         bp.Merge = nil
-        bp.Source = nil
         if type(child) == 'string' and t[child] then
-            t[id] = table.merged(t[id], t[child])
+            t[id] = table.merged(t[child], t[id] or bp)
+        else
+            t[id] = table.merged(t[id], bp)
         end
-        t[id] = table.merged(t[id], bp)
     else
         t[id] = bp
     end
