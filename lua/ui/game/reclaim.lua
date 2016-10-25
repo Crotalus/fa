@@ -39,9 +39,7 @@ local WorldLabel = Class(Group) {
     end,
 
     OnFrame = function(self, delta)
-        if not self.parent:IsHidden() then
-            self:Update()
-        end
+        self:Update()
     end
 }
 
@@ -64,14 +62,10 @@ function CreateReclaimLabel(view, r)
 
     label:DisableHitTest(true)
     label.Update = function(self)
-        if self.parent:IsHidden() then return end
-
         local view = self.parent.view
         local proj = view:Project(pos)
-        if not self.proj or self.proj.x ~= proj.x or self.proj.y ~= self.proj.y then
-            LayoutHelpers.AtLeftTopIn(self, self.parent, proj.x - self.Width() / 2, proj.y - self.Height() / 2 + 1)
-            self.proj = {x=proj.x, y=proj.y}
-        end
+        LayoutHelpers.AtLeftTopIn(self, self.parent, proj.x - self.Width() / 2, proj.y - self.Height() / 2 + 1)
+        self.proj = {x=proj.x, y=proj.y}
     end
 
     label.UpdateMass = function(self, r)
@@ -100,16 +94,13 @@ function UpdateLabels()
                 label = nil
             end
             Reclaim[id] = nil
-        elseif OnScreen(view, r.position) then
+        else
             if not label then
                 label = CreateReclaimLabel(view.ReclaimGroup, r)
                 view.ReclaimGroup.ReclaimLabels[id] = label
-            else
-                label:Show()
-                n_visible = n_visible + 1
             end
-        elseif label then
-            label:Hide()
+            
+            n_visible = n_visible + 1
         end
 
         if label and r.updated then
