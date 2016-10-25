@@ -7,10 +7,9 @@ local Prefs = import('/lua/user/prefs.lua')
 local Reclaim = {}
 
 -- called from schook/lua/UserSync.lua
-local NeedUpdate = false
 function UpdateReclaim(r)
-    r.updated = true
     Reclaim[r.id] = r
+    r.updated = true
 end
 
 function OnScreen(view, pos)
@@ -116,7 +115,6 @@ function UpdateLabels()
         if label and r.updated then
             label:UpdateMass(r)
             r.updated = false
-            NeedUpdate = true
         end
     end
 
@@ -147,7 +145,6 @@ function InitReclaimGroup(view)
         rgroup.ReclaimLabels = {}
 
         view.ReclaimGroup = rgroup
-        NeedUpdate = true
     else
         view.ReclaimGroup:Show()
     end
@@ -166,11 +163,8 @@ function ShowReclaimThread(watch_key)
             InitReclaimGroup(view)
         end
 
-        if NeedUpdate then
-            local labels, n_visible = UpdateLabels()
-            NeedUpdate = false
-        end
-
+        local labels, n_visible = UpdateLabels()
+        
         WaitSeconds(.1)
     end
 
